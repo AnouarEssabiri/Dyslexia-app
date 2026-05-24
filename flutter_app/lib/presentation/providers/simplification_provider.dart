@@ -2,22 +2,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/app_config.dart';
 import '../../data/api/api_client.dart';
+import 'history_provider.dart';
+import 'language_provider.dart';
 
 /// Simplification state class
 class SimplificationState {
-  final bool isLoading;
-  final String? originalText;
-  final String? simplifiedText;
-  final double? inferenceTimeMs;
-  final String? error;
 
   SimplificationState({
-    required this.isLoading,
+    this.isLoading = false,
     this.originalText,
     this.simplifiedText,
     this.inferenceTimeMs,
     this.error,
   });
+  final bool isLoading;
+  final String? originalText;
+  final String? simplifiedText;
+  final double? inferenceTimeMs;
+  final String? error;
 
   SimplificationState copyWith({
     bool? isLoading,
@@ -25,17 +27,15 @@ class SimplificationState {
     String? simplifiedText,
     double? inferenceTimeMs,
     String? error,
-  }) {
-    return SimplificationState(
+  }) => SimplificationState(
       isLoading: isLoading ?? this.isLoading,
       originalText: originalText ?? this.originalText,
       simplifiedText: simplifiedText ?? this.simplifiedText,
       inferenceTimeMs: inferenceTimeMs ?? this.inferenceTimeMs,
       error: error ?? this.error,
     );
-  }
 
-  bool get hasContent => originalText != null && simplifiedText != null;
+  bool get hasContent => simplifiedText != null;
 }
 
 /// Simplification notifier
@@ -64,8 +64,10 @@ class SimplificationNotifier extends Notifier<SimplificationState> {
 
     state = state.copyWith(isLoading: true, error: null);
 
+    final language = ref.read(languageProvider).locale.languageCode;
+
     try {
-      final response = await apiClient.simplifyText(text);
+      final response = await apiClient.simplifyText(text, language: language);
 
       state = state.copyWith(
         isLoading: false,
@@ -73,6 +75,14 @@ class SimplificationNotifier extends Notifier<SimplificationState> {
         simplifiedText: response.simplified,
         inferenceTimeMs: response.inferenceTimeMs,
         error: null,
+      );
+
+      // Save to history
+      final title = text.length > 30 ? '${text.substring(0, 30)}...' : text;
+      ref.read(historyProvider.notifier).addItem(
+        title,
+        response.simplified,
+        HistoryType.simplification,
       );
     } catch (e) {
       state = state.copyWith(

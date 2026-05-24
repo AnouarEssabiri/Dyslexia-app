@@ -30,8 +30,8 @@ class AppConfig {
 
   // TTS Configuration
   static const double ttsDefaultRate = 0.8;
-  static const double ttsDefaultPitch = 1.0;
-  static const double ttsDefaultVolume = 1.0;
+  static const double ttsDefaultPitch = 1;
+  static const double ttsDefaultVolume = 1;
 
   // UI Configuration
   static const Duration debounceDelay = Duration(milliseconds: 500);

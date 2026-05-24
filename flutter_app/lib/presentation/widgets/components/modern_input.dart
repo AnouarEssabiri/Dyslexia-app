@@ -4,50 +4,38 @@ import '../../../config/theme_config.dart';
 /// Premium Modern Input Field Component
 /// Features smooth animations, elegant design, and validation
 class ModernInput extends StatefulWidget {
-  final String? label;
-  final String? hint;
-  final String? initialValue;
-  final TextEditingController? controller;
-  final bool isPassword;
-  final bool isMultiline;
-  final bool isSearch;
-  final IconData? prefixIcon;
-  final IconData? suffixIcon;
-  final VoidCallback? onSuffixIconTap;
-  final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-  final void Function(String?)? onSubmitted;
-  final TextInputType? keyboardType;
-  final int? maxLines;
-  final int? maxLength;
-  final bool enabled;
-  final bool readOnly;
-  final FocusNode? focusNode;
-  final EdgeInsetsGeometry? contentPadding;
 
   const ModernInput({
     super.key,
     this.label,
     this.hint,
-    this.initialValue,
     this.controller,
     this.isPassword = false,
     this.isMultiline = false,
-    this.isSearch = false,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.onSuffixIconTap,
+    this.prefix,
+    this.suffix,
     this.validator,
     this.onChanged,
     this.onSubmitted,
     this.keyboardType,
     this.maxLines,
-    this.maxLength,
     this.enabled = true,
-    this.readOnly = false,
     this.focusNode,
-    this.contentPadding,
   });
+  final String? label;
+  final String? hint;
+  final TextEditingController? controller;
+  final bool isPassword;
+  final bool isMultiline;
+  final Widget? prefix;
+  final Widget? suffix;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final void Function(String)? onSubmitted;
+  final TextInputType? keyboardType;
+  final int? maxLines;
+  final bool enabled;
+  final FocusNode? focusNode;
 
   @override
   State<ModernInput> createState() => _ModernInputState();
@@ -55,36 +43,12 @@ class ModernInput extends StatefulWidget {
 
 class _ModernInputState extends State<ModernInput> {
   late bool _obscureText;
-  late FocusNode _focusNode;
   bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
     _obscureText = widget.isPassword;
-    _focusNode = widget.focusNode ?? FocusNode();
-    _focusNode.addListener(_onFocusChange);
-  }
-
-  @override
-  void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    if (widget.focusNode == null) {
-      _focusNode.dispose();
-    }
-    super.dispose();
-  }
-
-  void _onFocusChange() {
-    setState(() {
-      _isFocused = _focusNode.hasFocus;
-    });
-  }
-
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
   }
 
   @override
@@ -98,215 +62,78 @@ class _ModernInputState extends State<ModernInput> {
         if (widget.label != null) ...[
           Text(
             widget.label!,
-            style: theme.textTheme.titleSmall?.copyWith(
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: _isFocused
-                  ? ThemeConfig.primaryColor
-                  : theme.textTheme.titleSmall?.color,
+              color: isDark ? ThemeConfig.darkTextSecondary : ThemeConfig.textSecondary,
             ),
           ),
-          const SizedBox(height: ThemeConfig.spacingSmall),
+          const SizedBox(height: 6),
         ],
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          decoration: BoxDecoration(
-            color: widget.enabled
-                ? (isDark
-                    ? ThemeConfig.darkSurfaceVariant
-                    : ThemeConfig.surfaceVariant)
-                : (isDark
-                    ? ThemeConfig.darkSurfaceVariant.withOpacity(0.5)
-                    : ThemeConfig.surfaceVariant.withOpacity(0.5)),
-            borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
-            border: Border.all(
-              color: _isFocused
-                  ? ThemeConfig.primaryColor
-                  : (isDark
-                      ? ThemeConfig.darkBorder
-                      : ThemeConfig.borderColor),
-              width: _isFocused ? 2 : 1,
-            ),
-            boxShadow: _isFocused
-                ? [
-                    BoxShadow(
-                      color: ThemeConfig.primaryColor.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          child: TextField(
+        Focus(
+          onFocusChange: (hasFocus) {
+            setState(() => _isFocused = hasFocus);
+          },
+          child: TextFormField(
             controller: widget.controller,
-            initialValue: widget.initialValue,
+            focusNode: widget.focusNode,
             obscureText: _obscureText,
-            focusNode: _focusNode,
-            enabled: widget.enabled,
-            readOnly: widget.readOnly,
+            onChanged: widget.onChanged,
+            onFieldSubmitted: widget.onSubmitted,
+            validator: widget.validator,
             keyboardType: widget.keyboardType,
             maxLines: widget.isMultiline ? (widget.maxLines ?? 5) : 1,
-            maxLength: widget.maxLength,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: widget.enabled
-                  ? theme.textTheme.bodyLarge?.color
-                  : theme.textTheme.bodyDisabled?.color,
+            enabled: widget.enabled,
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 15,
+              color: isDark ? ThemeConfig.darkTextPrimary : ThemeConfig.textPrimary,
             ),
             decoration: InputDecoration(
               hintText: widget.hint,
-              prefixIcon: widget.prefixIcon != null
-                  ? Icon(
-                      widget.prefixIcon,
-                      color: _isFocused
-                          ? ThemeConfig.primaryColor
-                          : theme.textTheme.bodySmall?.color,
-                      size: 20,
+              prefixIcon: widget.prefix != null
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: widget.prefix,
                     )
-                  : (widget.isSearch
-                      ? Icon(
-                          Icons.search,
-                          color: _isFocused
-                              ? ThemeConfig.primaryColor
-                              : theme.textTheme.bodySmall?.color,
-                          size: 20,
-                        )
-                      : null),
+                  : null,
+              prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
               suffixIcon: widget.isPassword
                   ? IconButton(
                       icon: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: theme.textTheme.bodySmall?.color,
+                        _obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         size: 20,
+                        color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
                       ),
-                      onPressed: _togglePasswordVisibility,
+                      onPressed: () => setState(() => _obscureText = !_obscureText),
                     )
-                  : (widget.suffixIcon != null
-                      ? IconButton(
-                          icon: Icon(
-                            widget.suffixIcon,
-                            color: _isFocused
-                                ? ThemeConfig.primaryColor
-                                : theme.textTheme.bodySmall?.color,
-                            size: 20,
-                          ),
-                          onPressed: widget.onSuffixIconTap,
-                        )
-                      : null),
-              contentPadding: widget.contentPadding ??
-                  const EdgeInsets.symmetric(
-                    horizontal: ThemeConfig.spacingMedium,
-                    vertical: ThemeConfig.spacingMedium,
-                  ),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
-              hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodySmall?.color,
+                  : widget.suffix,
+              filled: true,
+              fillColor: _isFocused
+                  ? (isDark ? ThemeConfig.darkSurface : Colors.white)
+                  : (isDark ? ThemeConfig.darkSurfaceVariant : ThemeConfig.surfaceVariant),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
+                borderSide: BorderSide.none,
               ),
-              counterText: '',
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
+                borderSide: BorderSide(
+                  color: isDark ? ThemeConfig.darkBorder : ThemeConfig.borderColor,
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
+                borderSide: const BorderSide(
+                  color: ThemeConfig.primaryColor,
+                  width: 1.5,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             ),
-            onChanged: widget.onChanged,
-            onSubmitted: widget.onSubmitted,
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Premium Search Input with animated clear button
-class ModernSearchInput extends StatefulWidget {
-  final String hint;
-  final void Function(String) onChanged;
-  final void Function(String)? onSubmitted;
-  final TextEditingController? controller;
-
-  const ModernSearchInput({
-    super.key,
-    required this.hint,
-    required this.onChanged,
-    this.onSubmitted,
-    this.controller,
-  });
-
-  @override
-  State<ModernSearchInput> createState() => _ModernSearchInputState();
-}
-
-class _ModernSearchInputState extends State<ModernSearchInput> {
-  late TextEditingController _controller;
-  bool _hasText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = widget.controller ?? TextEditingController();
-    _controller.addListener(_onTextChanged);
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_onTextChanged);
-    if (widget.controller == null) {
-      _controller.dispose();
-    }
-    super.dispose();
-  }
-
-  void _onTextChanged() {
-    setState(() {
-      _hasText = _controller.text.isNotEmpty;
-    });
-    widget.onChanged(_controller.text);
-  }
-
-  void _clearText() {
-    _controller.clear();
-    widget.onChanged('');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark
-            ? ThemeConfig.darkSurfaceVariant
-            : ThemeConfig.surfaceVariant,
-        borderRadius: BorderRadius.circular(ThemeConfig.radiusFull),
-      ),
-      child: TextField(
-        controller: _controller,
-        onSubmitted: widget.onSubmitted,
-        style: theme.textTheme.bodyLarge,
-        decoration: InputDecoration(
-          hintText: widget.hint,
-          hintStyle: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.textTheme.bodySmall?.color,
-          ),
-          prefixIcon: const Icon(
-            Icons.search,
-            size: 20,
-          ),
-          suffixIcon: _hasText
-              ? IconButton(
-                  icon: const Icon(
-                    Icons.clear,
-                    size: 20,
-                  ),
-                  onPressed: _clearText,
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: ThemeConfig.spacingMedium,
-            vertical: ThemeConfig.spacingMedium,
-          ),
-        ),
-      ),
     );
   }
 }

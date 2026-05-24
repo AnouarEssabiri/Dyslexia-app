@@ -1,546 +1,405 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../config/theme_config.dart';
+import '../providers/history_provider.dart';
+import '../providers/language_provider.dart';
 import '../widgets/components/modern_card.dart';
 import '../widgets/components/modern_button.dart';
 import '../widgets/components/avatar.dart';
 import '../widgets/components/modern_drawer.dart';
+import 'chat_page.dart';
 import 'text_input_page.dart';
+import 'history_detail_page.dart';
 
-/// Premium Modern Home Page
-/// Features AI assistant aesthetic, smooth animations, and elegant design
-class HomePage extends ConsumerStatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  ConsumerState<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends ConsumerState<HomePage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
-  bool _isDrawerOpen = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
-    );
-    _fadeController.forward();
-  }
-
-  @override
-  void dispose() {
-    _fadeController.dispose();
-    super.dispose();
-  }
-
-  void _toggleDrawer() {
-    setState(() {
-      _isDrawerOpen = !_isDrawerOpen;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch theme and language to ensure rebuilds
+    ref.watch(themeModeProvider);
+    final languageState = ref.watch(languageProvider);
+    
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: SafeArea(
-            top: false,
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: CustomScrollView(
-                slivers: [
-                  // Premium App Bar
-                  SliverAppBar(
-                    expandedHeight: 120,
-                    floating: false,
-                    pinned: true,
-                    elevation: 0,
-                    backgroundColor: theme.scaffoldBackgroundColor,
-                    leading: IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: theme.textTheme.bodyLarge?.color,
-                      ),
-                      onPressed: _toggleDrawer,
-                    ),
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Container(
-                        decoration: BoxDecoration(
-                          gradient: isDark
-                              ? ThemeConfig.darkGradient
-                              : LinearGradient(
-                                  colors: [
-                                    ThemeConfig.surfaceColor,
-                                    ThemeConfig.surfaceVariant,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                        ),
-                      ),
-                      titlePadding: const EdgeInsets.only(
-                        left: ThemeConfig.spacingLarge,
-                        bottom: ThemeConfig.spacingMedium,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Good morning',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: ThemeConfig.spacingXSmall),
-                          Text(
-                            'Dyslexia Support',
-                            style: theme.textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: theme.textTheme.headlineMedium?.color,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.notifications_outlined,
-                          color: theme.textTheme.bodyLarge?.color,
-                        ),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          theme.brightness == Brightness.dark
-                              ? Icons.light_mode_outlined
-                              : Icons.dark_mode_outlined,
-                          color: theme.textTheme.bodyLarge?.color,
-                        ),
-                        onPressed: () {
-                          ref.read(themeProvider.notifier).toggleTheme();
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: ThemeConfig.spacingMedium),
-                        child: ModernAvatar(
-                          name: 'User',
-                          size: 36,
-                          showBorder: true,
-                        ),
-                      ),
-                    ],
-                  ),
-              
-              // Main Content
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(ThemeConfig.spacingLarge),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Welcome Card with Glassmorphism
-                      ModernCard(
-                        isGlassmorphism: true,
-                        padding: const EdgeInsets.all(ThemeConfig.spacingLarge),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(ThemeConfig.spacingMedium),
-                                  decoration: BoxDecoration(
-                                    gradient: ThemeConfig.primaryGradient,
-                                    borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
-                                  ),
-                                  child: Icon(
-                                    Icons.auto_awesome,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: ThemeConfig.spacingMedium),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'AI-Powered Assistance',
-                                        style: theme.textTheme.titleLarge?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      const SizedBox(height: ThemeConfig.spacingXSmall),
-                                      Text(
-                                        'Simplify text, improve readability, and enhance your reading experience',
-                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                                          height: ThemeConfig.lineHeightLarge,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      const SizedBox(height: ThemeConfig.spacingXLarge),
-                      
-                      // Quick Actions Section
-                      Text(
-                        'Quick Actions',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: ThemeConfig.spacingMedium),
-                      
-                      // Action Cards Grid
-                      GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: ThemeConfig.spacingMedium,
-                        mainAxisSpacing: ThemeConfig.spacingMedium,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        childAspectRatio: 1.0,
-                        children: [
-                          _ActionCard(
-                            icon: Icons.text_fields_rounded,
-                            title: 'Simplify Text',
-                            subtitle: 'AI-powered simplification',
-                            color: ThemeConfig.primaryColor,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const TextInputPage(),
-                                ),
-                              );
-                            },
-                          ),
-                          _ActionCard(
-                            icon: Icons.camera_alt_rounded,
-                            title: 'Scan Document',
-                            subtitle: 'OCR text extraction',
-                            color: ThemeConfig.infoColor,
-                            onTap: () {
-                              _showComingSoon(context, 'Document Scanning');
-                            },
-                          ),
-                          _ActionCard(
-                            icon: Icons.description_rounded,
-                            title: 'My Documents',
-                            subtitle: 'View saved files',
-                            color: ThemeConfig.successColor,
-                            onTap: () {
-                              _showComingSoon(context, 'Documents');
-                            },
-                          ),
-                          _ActionCard(
-                            icon: Icons.settings_rounded,
-                            title: 'Settings',
-                            subtitle: 'Customize app',
-                            color: theme.textTheme.bodySmall?.color ?? Colors.grey,
-                            onTap: () {
-                              _showComingSoon(context, 'Settings');
-                            },
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: ThemeConfig.spacingXLarge),
-                      
-                      // Recent Activity Section
-                      Text(
-                        'Recent Activity',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: ThemeConfig.spacingMedium),
-                      
-                      ModernCard(
-                        padding: const EdgeInsets.all(ThemeConfig.spacingMedium),
-                        child: Column(
-                          children: [
-                            _ActivityItem(
-                              icon: Icons.text_fields,
-                              title: 'Text Simplified',
-                              subtitle: '2 minutes ago',
-                              color: ThemeConfig.primaryColor,
-                            ),
-                            const Divider(),
-                            _ActivityItem(
-                              icon: Icons.description,
-                              title: 'Document Saved',
-                              subtitle: '1 hour ago',
-                              color: ThemeConfig.successColor,
-                            ),
-                            const Divider(),
-                            _ActivityItem(
-                              icon: Icons.camera_alt,
-                              title: 'Document Scanned',
-                              subtitle: '3 hours ago',
-                              color: ThemeConfig.infoColor,
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      const SizedBox(height: ThemeConfig.spacingXXLarge),
-                    ],
-                  ),
-                ),
+    return Scaffold(
+      backgroundColor: isDark ? ThemeConfig.darkBackground : ThemeConfig.backgroundColor,
+      drawer: const ModernDrawer(),
+      body: CustomScrollView(
+        slivers: [
+          _buildAppBar(context, isDark, ref, languageState),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildAIPrompt(context, isDark, l10n),
+                  const SizedBox(height: 32),
+                  _buildSectionTitle(context, l10n.translate('ai_tools'), isDark),
+                  const SizedBox(height: 16),
+                  _buildToolsGrid(context, isDark, l10n),
+                  const SizedBox(height: 32),
+                  _buildSectionTitle(context, l10n.translate('recent_history'), isDark),
+                  const SizedBox(height: 16),
+                  _buildRecentHistory(context, isDark, l10n),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, bool isDark, WidgetRef ref, LanguageState languageState) {
+    return SliverAppBar(
+      floating: true,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.menu, size: 22),
+          onPressed: () => Scaffold.of(context).openDrawer(),
         ),
       ),
-      // Modern Navigation Drawer
-      ModernDrawer(
-          isOpen: _isDrawerOpen,
-          onClose: _toggleDrawer,
-          header: ModernDrawerHeader(
-            userName: 'User',
-            userEmail: 'user@example.com',
-            onProfileTap: () {},
-            onSettingsTap: () {},
+      actions: [
+        // Language Selector Button
+        TextButton(
+          onPressed: () => _showLanguageDialog(context, ref),
+          style: TextButton.styleFrom(
+            minimumSize: Size.zero,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
           ),
-          items: [
-            DrawerItem(
-              icon: Icons.home_rounded,
-              title: 'Home',
-              onTap: () {},
-              isActive: true,
+          child: Text(
+            languageState.locale.languageCode.toUpperCase(),
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isDark ? ThemeConfig.darkTextPrimary : ThemeConfig.textPrimary,
             ),
-            DrawerItem(
-              icon: Icons.chat_rounded,
-              title: 'Chat',
-              onTap: () {},
-            ),
-            DrawerItem(
-              icon: Icons.description_rounded,
-              title: 'Documents',
-              onTap: () {},
-            ),
-            DrawerItem(
-              icon: Icons.history_rounded,
-              title: 'History',
-              onTap: () {},
-            ),
-          ],
-          secondaryItems: [
-            DrawerItem(
-              icon: Icons.settings_rounded,
-              title: 'Settings',
-              onTap: () {},
-            ),
-            DrawerItem(
-              icon: Icons.help_rounded,
-              title: 'Help & Support',
-              onTap: () {},
-            ),
-            DrawerItem(
-              icon: Icons.logout_rounded,
-              title: 'Sign Out',
-              onTap: () {},
-            ),
-          ],
+          ),
         ),
+        const SizedBox(width: 4),
+        // Theme Toggle Button
+        IconButton(
+          icon: Icon(
+            isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+            size: 20,
+          ),
+          onPressed: () {
+            ref.read(themeModeProvider.notifier).toggleTheme();
+          },
+        ),
+        const SizedBox(width: 8),
+        ModernAvatar(name: 'User', size: 32, showBorder: true),
+        const SizedBox(width: 16),
       ],
     );
   }
 
-  void _showComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature coming soon'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
-        ),
-        margin: const EdgeInsets.all(ThemeConfig.spacingMedium),
-      ),
-    );
-  }
-}
-
-/// Premium Action Card with smooth animations
-class _ActionCard extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _ActionCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  State<_ActionCard> createState() => _ActionCardState();
-}
-
-class _ActionCardState extends State<_ActionCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse(),
-      onTapCancel: () => _controller.reverse(),
-      onTap: widget.onTap,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: ModernCard(
-          padding: const EdgeInsets.all(ThemeConfig.spacingLarge),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: widget.color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
-                ),
-                child: Icon(
-                  widget.icon,
-                  size: 24,
-                  color: widget.color,
-                ),
-              ),
-              const SizedBox(height: ThemeConfig.spacingMedium),
-              Text(
-                widget.title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: ThemeConfig.spacingXSmall),
-              Text(
-                widget.subtitle,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
-                ),
-              ),
-            ],
-          ),
+  void _showLanguageDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).translate('language')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildLanguageOption(context, ref, 'English', const Locale('en')),
+            _buildLanguageOption(context, ref, 'العربية', const Locale('ar')),
+            _buildLanguageOption(context, ref, 'Français', const Locale('fr')),
+          ],
         ),
       ),
     );
   }
-}
 
-/// Activity Item for Recent Activity Section
-class _ActivityItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color color;
+  Widget _buildLanguageOption(BuildContext context, WidgetRef ref, String name, Locale locale) {
+    final isSelected = ref.read(languageProvider).locale == locale;
+    return ListTile(
+      title: Text(name),
+      trailing: isSelected ? const Icon(Icons.check, color: ThemeConfig.primaryColor) : null,
+      onTap: () {
+        ref.read(languageProvider.notifier).setLanguage(locale.languageCode);
+        Navigator.pop(context);
+      },
+    );
+  }
 
-  const _ActivityItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: ThemeConfig.spacingSmall),
-      child: Row(
+  Widget _buildAIPrompt(BuildContext context, bool isDark, AppLocalizations l10n) {
+    return ModernCard(
+      padding: const EdgeInsets.all(24),
+      backgroundColor: isDark ? ThemeConfig.darkSurface : Colors.white,
+      showShadow: true,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ChatPage()),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(ThemeConfig.radiusSmall),
+              gradient: ThemeConfig.primaryGradient,
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: color,
+            child: const Icon(Icons.auto_awesome, color: Colors.white, size: 24),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            l10n.translate('help_read'),
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: ThemeConfig.spacingMedium),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: ThemeConfig.spacingXSmall),
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
-                  ),
-                ),
-              ],
+          const SizedBox(height: 8),
+          Text(
+            l10n.translate('start_conversation'),
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 15,
+              color: isDark ? ThemeConfig.darkTextSecondary : ThemeConfig.textSecondary,
+              height: 1.5,
             ),
           ),
-          Icon(
-            Icons.chevron_right,
-            color: theme.textTheme.bodySmall?.color?.withOpacity(0.4),
-            size: 20,
+          const SizedBox(height: 20),
+          ModernButton(
+            text: l10n.translate('start_chat'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ChatPage()),
+              );
+            },
+            icon: const Icon(Icons.chat_bubble_outline, size: 18, color: Colors.white),
+            isFullWidth: true,
           ),
         ],
+      ),
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title, bool isDark) {
+    return Text(
+      title,
+      style: ThemeConfig.getPrimaryTextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ).animate().fadeIn(delay: 200.ms);
+  }
+
+  Widget _buildToolsGrid(BuildContext context, bool isDark, AppLocalizations l10n) {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      childAspectRatio: 1.3,
+      children: [
+        _buildToolCard(
+          context,
+          icon: Icons.auto_awesome,
+          title: l10n.translate('simplify_text'),
+          color: ThemeConfig.primaryColor,
+          isDark: isDark,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const TextInputPage()),
+            );
+          },
+        ),
+        _buildToolCard(
+          context,
+          icon: Icons.qr_code_scanner,
+          title: l10n.translate('ocr_scan'),
+          color: Colors.purple,
+          isDark: isDark,
+          onTap: () {},
+        ),
+        _buildToolCard(
+          context,
+          icon: Icons.audio_file_outlined,
+          title: l10n.translate('import_audio'),
+          color: Colors.orange,
+          isDark: isDark,
+          onTap: () {},
+        ),
+        _buildToolCard(
+          context,
+          icon: Icons.image_outlined,
+          title: l10n.translate('pick_image'),
+          color: Colors.blue,
+          isDark: isDark,
+          onTap: () {},
+        ),
+      ],
+    ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1, end: 0);
+  }
+
+  Widget _buildToolCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required Color color,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return ModernCard(
+      padding: const EdgeInsets.all(16),
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          Text(
+            title,
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentHistory(BuildContext context, bool isDark, AppLocalizations l10n) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final history = ref.watch(historyProvider);
+
+        if (history.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.history,
+                    size: 48,
+                    color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.translate('no_history'),
+                    style: ThemeConfig.getPrimaryTextStyle(
+                      color: isDark ? ThemeConfig.darkTextSecondary : ThemeConfig.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ).animate().fadeIn(delay: 400.ms);
+        }
+
+        return Column(
+          children: history.map((item) => _buildHistoryItem(
+            context,
+            item: item,
+            time: _formatTimestamp(context, item.timestamp),
+            isDark: isDark,
+          )).toList(),
+        );
+      },
+    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0);
+  }
+
+  String _formatTimestamp(BuildContext context, DateTime timestamp) {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} ${l10n.translate('mins_ago')}';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} ${l10n.translate('hours_ago')}';
+    } else if (difference.inDays == 1) {
+      return l10n.translate('yesterday');
+    } else {
+      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+    }
+  }
+
+  Widget _buildHistoryItem(
+    BuildContext context, {
+    required HistoryItem item,
+    required String time,
+    required bool isDark,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ModernCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HistoryDetailPage(item: item),
+            ),
+          );
+        },
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDark ? ThemeConfig.darkSurfaceVariant : ThemeConfig.surfaceVariant,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                item.type == HistoryType.chat ? Icons.chat_bubble_outline : Icons.auto_awesome,
+                size: 16,
+                color: ThemeConfig.primaryColor,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: ThemeConfig.getPrimaryTextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    time,
+                    style: ThemeConfig.getPrimaryTextStyle(
+                      fontSize: 12,
+                      color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
+            ),
+          ],
+        ),
       ),
     );
   }

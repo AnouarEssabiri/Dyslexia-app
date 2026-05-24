@@ -5,10 +5,6 @@ import '../../config/app_config.dart';
 
 /// Authentication state class
 class AuthState {
-  final bool isLoading;
-  final bool isAuthenticated;
-  final User? user;
-  final String? error;
 
   AuthState({
     required this.isLoading,
@@ -16,20 +12,22 @@ class AuthState {
     this.user,
     this.error,
   });
+  final bool isLoading;
+  final bool isAuthenticated;
+  final User? user;
+  final String? error;
 
   AuthState copyWith({
     bool? isLoading,
     bool? isAuthenticated,
     User? user,
     String? error,
-  }) {
-    return AuthState(
+  }) => AuthState(
       isLoading: isLoading ?? this.isLoading,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       user: user ?? this.user,
       error: error ?? this.error,
     );
-  }
 }
 
 /// Auth provider class
@@ -151,6 +149,4 @@ class AuthNotifier extends Notifier<AuthState> {
 final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
 
 /// User provider (for easy access to current user)
-final currentUserProvider = Provider<User?>((ref) {
-  return ref.watch(authProvider).user;
-});
+final currentUserProvider = Provider<User?>((ref) => ref.watch(authProvider).user);

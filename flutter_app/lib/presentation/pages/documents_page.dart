@@ -1,70 +1,100 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../config/theme_config.dart';
+import '../widgets/components/modern_drawer.dart';
 
-/// User documents list screen (placeholder for Phase 1B)
-class DocumentsPage extends StatefulWidget {
-  const DocumentsPage({Key? key}) : super(key: key);
+class DocumentsPage extends StatelessWidget {
+  const DocumentsPage({super.key});
 
-  @override
-  State<DocumentsPage> createState() => _DocumentsPageState();
-}
-
-class _DocumentsPageState extends State<DocumentsPage> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? ThemeConfig.darkBackground : ThemeConfig.backgroundColor,
+      drawer: const ModernDrawer(),
       appBar: AppBar(
-        title: const Text('My Documents'),
-        elevation: 0,
+        title: const Text('Documents'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Show search
-            },
+            icon: const Icon(Icons.search, size: 20),
+            onPressed: () {},
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(ThemeConfig.spacingMedium),
+          padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.description_outlined,
-                size: 64,
-                color: ThemeConfig.primaryColor,
-              ),
-              const SizedBox(height: ThemeConfig.spacingLarge),
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: isDark ? ThemeConfig.darkSurface : Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: ThemeConfig.premiumShadow,
+                ),
+                child: Icon(
+                  Icons.file_copy_outlined,
+                  size: 48,
+                  color: ThemeConfig.primaryColor,
+                ),
+              ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
+              const SizedBox(height: 32),
               Text(
-                'No Documents Yet',
-                style: Theme.of(context).textTheme.displaySmall,
-              ),
-              const SizedBox(height: ThemeConfig.spacingMedium),
+                'No documents yet',
+                style: ThemeConfig.getPrimaryTextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ).animate().fadeIn(delay: 200.ms),
+              const SizedBox(height: 12),
               Text(
-                'Start by simplifying text or scanning a document.',
-                style: Theme.of(context).textTheme.bodyMedium,
+                'Your simplified texts and scanned documents will appear here.',
+                style: ThemeConfig.getPrimaryTextStyle(
+                  fontSize: 15,
+                  color: isDark ? ThemeConfig.darkTextSecondary : ThemeConfig.textSecondary,
+                  height: 1.5,
+                ),
                 textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: ThemeConfig.spacingXLarge),
-              
-              // Placeholder for document management
-              Text(
-                'Document management coming in Phase 1B.\n\n'
-                'Features planned:\n'
-                '• Save simplified documents\n'
-                '• Organize with labels/folders\n'
-                '• Search and filter\n'
-                '• Sync with cloud',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
+              ).animate().fadeIn(delay: 300.ms),
+              const SizedBox(height: 48),
+              _buildPlaceholderInfo(isDark),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildPlaceholderInfo(bool isDark) => Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? ThemeConfig.darkSurfaceVariant : ThemeConfig.surfaceVariant,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Coming Soon',
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: ThemeConfig.primaryColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Full document management with cloud sync, folders, and search is coming in the next update.',
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 13,
+              color: isDark ? ThemeConfig.darkTextSecondary : ThemeConfig.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.1, end: 0);
 }

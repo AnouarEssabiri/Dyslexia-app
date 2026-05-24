@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # State Management
   riverpod: ^3.2.1
@@ -44,6 +46,9 @@ dependencies:
   intl: ^0.20.2
   uuid: ^4.0.0
   logger: ^2.0.0
+  google_fonts: ^8.1.0
+  flutter_animate: ^4.5.2
+  lucide_icons_flutter: ^3.1.14+1
 
 dev_dependencies:
   flutter_test:
@@ -57,17 +62,16 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/fonts/
     - assets/images/
 
   fonts:
     - family: OpenDyslexic
       fonts:
-        - asset: assets/fonts/OpenDyslexic-Regular.ttf
-        - asset: assets/fonts/OpenDyslexic-Bold.ttf
+        - asset: assets/fonts/OpenDyslexic-Regular.otf
+        - asset: assets/fonts/OpenDyslexic-Bold.otf
           weight: 700
-        - asset: assets/fonts/OpenDyslexic-Italic.ttf
+        - asset: assets/fonts/OpenDyslexic-Italic.otf
           style: italic
-        - asset: assets/fonts/OpenDyslexic-BoldItalic.ttf
+        - asset: assets/fonts/OpenDyslexic-BoldItalic.otf
           weight: 700
           style: italic

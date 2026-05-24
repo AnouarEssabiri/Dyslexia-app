@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../../config/theme_config.dart';
+import '../providers/language_provider.dart';
+import '../widgets/components/modern_drawer.dart';
 
 /// Dyslexia-friendly text reader screen (placeholder for Phase 1B)
 class ReaderPage extends StatefulWidget {
-  final String originalText;
-  final String simplifiedText;
 
   const ReaderPage({
     Key? key,
     required this.originalText,
     required this.simplifiedText,
   }) : super(key: key);
+  final String originalText;
+  final String simplifiedText;
 
   @override
   State<ReaderPage> createState() => _ReaderPageState();
@@ -23,9 +25,11 @@ class _ReaderPageState extends State<ReaderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
+      drawer: const ModernDrawer(),
       appBar: AppBar(
-        title: const Text('Dyslexia-Friendly Reader'),
+        title: Text(l10n.translate('reader_title')),
         elevation: 0,
         actions: [
           IconButton(
@@ -47,9 +51,9 @@ class _ReaderPageState extends State<ReaderPage> {
                 children: [
                   Expanded(
                     child: SegmentedButton(
-                      segments: const [
-                        ButtonSegment(label: Text('Simplified'), value: false),
-                        ButtonSegment(label: Text('Original'), value: true),
+                      segments: [
+                        ButtonSegment(label: Text(l10n.translate('simplified')), value: false),
+                        ButtonSegment(label: Text(l10n.translate('original')), value: true),
                       ],
                       selected: {showOriginal},
                       onSelectionChanged: (selection) {
@@ -63,8 +67,8 @@ class _ReaderPageState extends State<ReaderPage> {
 
               // Focus mode toggle
               SwitchListTile(
-                title: const Text('Focus Mode'),
-                subtitle: const Text('Reading ruler to improve focus'),
+                title: Text(l10n.translate('focus_mode')),
+                subtitle: Text(l10n.translate('focus_mode_desc')),
                 value: focusModeEnabled,
                 onChanged: (value) {
                   setState(() => focusModeEnabled = value);
@@ -99,11 +103,11 @@ class _ReaderPageState extends State<ReaderPage> {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('TTS coming soon')),
+                          SnackBar(content: Text(l10n.translate('tts_coming_soon'))),
                         );
                       },
                       icon: const Icon(Icons.volume_up),
-                      label: const Text('Read Aloud'),
+                      label: Text(l10n.translate('read_aloud')),
                     ),
                   ),
                   const SizedBox(width: ThemeConfig.spacingMedium),
@@ -111,11 +115,11 @@ class _ReaderPageState extends State<ReaderPage> {
                     child: OutlinedButton.icon(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Save coming soon')),
+                          SnackBar(content: Text(l10n.translate('save_coming_soon'))),
                         );
                       },
                       icon: const Icon(Icons.save),
-                      label: const Text('Save'),
+                      label: Text(l10n.translate('save')),
                     ),
                   ),
                 ],

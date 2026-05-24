@@ -7,9 +7,6 @@ import '../../config/app_config.dart';
 
 /// Simplification response model
 class SimplificationResponse {
-  final String original;
-  final String simplified;
-  final double inferenceTimeMs;
 
   SimplificationResponse({
     required this.original,
@@ -24,11 +21,13 @@ class SimplificationResponse {
       inferenceTimeMs: (json['inference_time_ms'] as num).toDouble(),
     );
   }
+  final String original;
+  final String simplified;
+  final double inferenceTimeMs;
 }
 
 /// API client for backend communication
 class ApiClient {
-  final Dio dio;
 
   ApiClient({Dio? dio}) : dio = dio ?? Dio() {
     // Configure Dio
@@ -47,10 +46,12 @@ class ApiClient {
       ),
     );
   }
+  final Dio dio;
 
   /// Simplify text using backend AI model
   Future<SimplificationResponse> simplifyText(
     String text, {
+    String language = 'en',
     int maxLength = 512,
   }) async {
     try {
@@ -58,6 +59,7 @@ class ApiClient {
         '${AppConfig.apiPrefix}/simplify',
         data: {
           'text': text,
+          'language': language,
           'max_length': maxLength,
         },
       );
@@ -117,6 +119,4 @@ class ApiClient {
 }
 
 /// API client provider
-final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient();
-});
+final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());

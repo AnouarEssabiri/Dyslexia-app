@@ -1,321 +1,347 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../config/theme_config.dart';
-import 'modern_card.dart';
+import '../../providers/history_provider.dart';
+import '../../providers/settings_provider.dart';
+import '../../providers/language_provider.dart';
+import '../../pages/history_detail_page.dart';
 import 'avatar.dart';
 
-/// Premium Modern Navigation Drawer
-/// Features glassmorphism, smooth animations, and elegant design
-class ModernDrawer extends StatelessWidget {
-  final bool isOpen;
-  final VoidCallback onClose;
-  final Widget? header;
-  final List<DrawerItem> items;
-  final List<DrawerItem>? secondaryItems;
-  final Widget? footer;
-
-  const ModernDrawer({
-    super.key,
-    required this.isOpen,
-    required this.onClose,
-    this.header,
-    required this.items,
-    this.secondaryItems,
-    this.footer,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return GestureDetector(
-      onTap: onClose,
-      child: Container(
-        color: Colors.black.withOpacity(0.5),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          width: isOpen ? 320 : 0,
-          child: isOpen
-              ? GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? ThemeConfig.darkSurface
-                          : ThemeConfig.surfaceColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.5 : 0.15),
-                          blurRadius: 32,
-                          offset: const Offset(0, 0),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        if (header != null) ...[
-                          header!,
-                          const Divider(height: 1),
-                        ],
-                        Expanded(
-                          child: ListView(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: ThemeConfig.spacingMedium,
-                            ),
-                            children: [
-                              ...items.map((item) => _DrawerTile(
-                                    item: item,
-                                    onTap: () {
-                                      item.onTap();
-                                      onClose();
-                                    },
-                                  )),
-                              if (secondaryItems != null) ...[
-                                const SizedBox(height: ThemeConfig.spacingLarge),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: ThemeConfig.spacingLarge,
-                                  ),
-                                  child: Divider(),
-                                ),
-                                const SizedBox(height: ThemeConfig.spacingMedium),
-                                ...secondaryItems!.map((item) => _DrawerTile(
-                                      item: item,
-                                      onTap: () {
-                                        item.onTap();
-                                        onClose();
-                                      },
-                                    )),
-                              ],
-                            ],
-                          ),
-                        ),
-                        if (footer != null) footer!,
-                      ],
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ),
-    );
-  }
-}
-
 class DrawerItem {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final VoidCallback onTap;
-  final bool isActive;
-  final Widget? trailing;
-
-  DrawerItem({
+  const DrawerItem({
     required this.icon,
     required this.title,
-    this.subtitle,
     required this.onTap,
-    this.isActive = false,
-    this.trailing,
+    this.isSelected = false,
   });
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+  final bool isSelected;
 }
 
-class _DrawerTile extends StatelessWidget {
-  final DrawerItem item;
-  final VoidCallback onTap;
-
-  const _DrawerTile({
-    required this.item,
-    required this.onTap,
-  });
+class ModernDrawer extends ConsumerWidget {
+  const ModernDrawer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final history = ref.watch(historyProvider);
 
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: ThemeConfig.spacingLarge,
-          vertical: ThemeConfig.spacingMedium,
+    return Drawer(
+      backgroundColor: isDark ? ThemeConfig.darkBackground : ThemeConfig.backgroundColor,
+      elevation: 0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(ThemeConfig.radiusXXLarge),
+          bottomRight: Radius.circular(ThemeConfig.radiusXXLarge),
         ),
-        decoration: BoxDecoration(
-          color: item.isActive
-              ? (isDark
-                  ? ThemeConfig.primaryColor.withOpacity(0.15)
-                  : ThemeConfig.primaryColor.withOpacity(0.1))
-              : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(ThemeConfig.spacingSmall),
-              decoration: BoxDecoration(
-                color: item.isActive
-                    ? ThemeConfig.primaryColor
-                    : (isDark
-                        ? ThemeConfig.darkSurfaceVariant
-                        : ThemeConfig.surfaceVariant),
-                borderRadius: BorderRadius.circular(ThemeConfig.radiusSmall),
-              ),
-              child: Icon(
-                item.icon,
-                size: 20,
-                color: item.isActive
-                    ? Colors.white
-                    : theme.textTheme.bodySmall?.color,
-              ),
-            ),
-            const SizedBox(width: ThemeConfig.spacingMedium),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: item.isActive ? FontWeight.w600 : FontWeight.w500,
-                      color: item.isActive
-                          ? ThemeConfig.primaryColor
-                          : theme.textTheme.titleMedium?.color,
-                    ),
-                  ),
-                  if (item.subtitle != null) ...[
-                    const SizedBox(height: ThemeConfig.spacingXSmall),
-                    Text(
-                      item.subtitle!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 24),
+              _buildHeader(context, isDark),
+              const SizedBox(height: 32),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle(context, 'History', isDark),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final history = ref.watch(historyProvider);
+                          final l10n = AppLocalizations.of(context);
+                          if (history.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 12, top: 8, bottom: 16),
+                              child: Text(
+                                l10n.translate('no_history'),
+                                style: ThemeConfig.getPrimaryTextStyle(
+                                  fontSize: 13,
+                                  color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
+                                ),
+                              ),
+                            );
+                          }
+                          return Column(
+                            children: history.take(3).map((item) => _buildDrawerItem(
+                                  context,
+                                  icon: item.type == HistoryType.chat ? Icons.chat_bubble_outline : Icons.auto_awesome,
+                                  title: item.title,
+                                  onTap: () {
+                                    Navigator.pop(context); // Close drawer
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HistoryDetailPage(item: item),
+                                      ),
+                                    );
+                                  },
+                                  isDark: isDark,
+                                )).toList(),
+                          );
+                        },
                       ),
-                    ),
-                  ],
-                ],
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(context, 'Tools', isDark),
+                      _buildDrawerItem(
+                        context,
+                        icon: Icons.image_outlined,
+                        title: AppLocalizations.of(context).translate('pick_image'),
+                        onTap: () {},
+                        isDark: isDark,
+                      ),
+                      _buildDrawerItem(
+                        context,
+                        icon: Icons.audio_file_outlined,
+                        title: AppLocalizations.of(context).translate('import_audio'),
+                        onTap: () {},
+                        isDark: isDark,
+                      ),
+                      _buildDrawerItem(
+                        context,
+                        icon: Icons.qr_code_scanner,
+                        title: AppLocalizations.of(context).translate('ocr_scan'),
+                        onTap: () {},
+                        isDark: isDark,
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(context, 'Accessibility', isDark),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final settings = ref.watch(settingsProvider);
+                          final languageState = ref.watch(languageProvider);
+                          final l10n = AppLocalizations.of(context);
+                          
+                          return Column(
+                            children: [
+                              SwitchListTile(
+                                title: Text(
+                                  l10n.translate('dyslexia_font'),
+                                  style: ThemeConfig.getPrimaryTextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                value: settings.useDyslexiaFont,
+                                onChanged: (value) {
+                                  ref.read(settingsProvider.notifier).setDyslexiaFont(value);
+                                },
+                                activeColor: ThemeConfig.primaryColor,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  l10n.translate('language'),
+                                  style: ThemeConfig.getPrimaryTextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  languageState.languageName,
+                                  style: ThemeConfig.getPrimaryTextStyle(
+                                    fontSize: 12,
+                                    color: ThemeConfig.primaryColor,
+                                  ),
+                                ),
+                                trailing: const Icon(Icons.language, size: 20),
+                                onTap: () => _showLanguageDialog(context, ref),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(context, 'Account', isDark),
+                      _buildDrawerItem(
+                        context,
+                        icon: Icons.settings_outlined,
+                        title: AppLocalizations.of(context).translate('settings'),
+                        onTap: () {},
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            if (item.trailing != null) item.trailing!,
-          ],
+              _buildFooter(context, isDark),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
   }
-}
 
-/// Premium Drawer Header with User Profile
-class ModernDrawerHeader extends StatelessWidget {
-  final String userName;
-  final String? userEmail;
-  final String? avatarUrl;
-  final VoidCallback? onProfileTap;
-  final VoidCallback? onSettingsTap;
-
-  const ModernDrawerHeader({
-    super.key,
-    required this.userName,
-    this.userEmail,
-    this.avatarUrl,
-    this.onProfileTap,
-    this.onSettingsTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      padding: EdgeInsets.all(ThemeConfig.spacingLarge),
-      decoration: BoxDecoration(
-        gradient: isDark
-            ? ThemeConfig.darkGradient
-            : LinearGradient(
-                colors: [
-                  ThemeConfig.surfaceColor,
-                  ThemeConfig.surfaceVariant,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+  Widget _buildHeader(BuildContext context, bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        const ModernAvatar(isAI: true, size: 40),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'DyslexiaSupport',
+              style: ThemeConfig.getPrimaryTextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: isDark ? ThemeConfig.darkTextPrimary : ThemeConfig.textPrimary,
               ),
+            ),
+            Text(
+              l10n.translate('premium_assistant'),
+              style: ThemeConfig.getPrimaryTextStyle(
+                fontSize: 12,
+                color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title, bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    String translatedTitle = title;
+    
+    if (title.toUpperCase() == 'HISTORY') translatedTitle = l10n.translate('history');
+    if (title.toUpperCase() == 'TOOLS') translatedTitle = l10n.translate('tools');
+    if (title.toUpperCase() == 'ACCESSIBILITY') translatedTitle = l10n.translate('accessibility');
+    if (title.toUpperCase() == 'ACCOUNT') translatedTitle = l10n.translate('settings');
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, bottom: 8),
+      child: Text(
+        translatedTitle.toUpperCase(),
+        style: ThemeConfig.getPrimaryTextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+          color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
+        ),
       ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    bool isSelected = false,
+    required bool isDark,
+  }) => Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? (isDark ? ThemeConfig.darkSurfaceVariant : ThemeConfig.surfaceVariant)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
+      ),
+      child: ListTile(
+        onTap: onTap,
+        dense: true,
+        leading: Icon(
+          icon,
+          size: 20,
+          color: isSelected
+              ? ThemeConfig.primaryColor
+              : (isDark ? ThemeConfig.darkTextSecondary : ThemeConfig.textSecondary),
+        ),
+        title: Text(
+          title,
+          style: ThemeConfig.getPrimaryTextStyle(
+            fontSize: 14,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            color: isSelected
+                ? (isDark ? ThemeConfig.darkTextPrimary : ThemeConfig.textPrimary)
+                : (isDark ? ThemeConfig.darkTextSecondary : ThemeConfig.textSecondary),
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ThemeConfig.radiusMedium),
+        ),
+      ),
+    );
+
+  Widget _buildFooter(BuildContext context, bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              ModernAvatar(
-                imageUrl: avatarUrl,
-                name: userName,
-                size: 56,
-                showBorder: true,
-                onTap: onProfileTap,
-              ),
-              SizedBox(width: ThemeConfig.spacingMedium),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      userName,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (userEmail != null) ...[
-                      SizedBox(height: ThemeConfig.spacingXSmall),
-                      Text(
-                        userEmail!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              if (onSettingsTap != null)
-                IconButton(
-                  icon: Icon(
-                    Icons.settings,
-                    color: theme.textTheme.bodySmall?.color,
-                  ),
-                  onPressed: onSettingsTap,
-                ),
-            ],
+          Text(
+            '${l10n.translate('version')} 0.1.0',
+            style: ThemeConfig.getPrimaryTextStyle(
+              fontSize: 12,
+              color: isDark ? ThemeConfig.darkTextTertiary : ThemeConfig.textTertiary,
+            ),
           ),
         ],
       ),
     );
   }
-}
 
-/// Premium Drawer Section Header
-class DrawerSectionHeader extends StatelessWidget {
-  final String title;
+  void _showLanguageDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? ThemeConfig.darkSurface : Colors.white,
+          title: Text(
+            l10n.translate('language'),
+            style: ThemeConfig.getPrimaryTextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption(context, ref, 'English', 'en'),
+              _buildLanguageOption(context, ref, 'العربية (Arabic)', 'ar'),
+              _buildLanguageOption(context, ref, 'Français (French)', 'fr'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  const DrawerSectionHeader({
-    super.key,
-    required this.title,
-  });
+  Widget _buildLanguageOption(BuildContext context, WidgetRef ref, String label, String code) {
+    final languageState = ref.watch(languageProvider);
+    final isSelected = languageState.locale.languageCode == code;
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: ThemeConfig.spacingLarge,
-        vertical: ThemeConfig.spacingSmall,
-      ),
-      child: Text(
-        title.toUpperCase(),
-        style: theme.textTheme.bodySmall?.copyWith(
-          fontWeight: FontWeight.w700,
-          letterSpacing: ThemeConfig.letterSpacingWide,
-          color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
+    return ListTile(
+      title: Text(
+        label,
+        style: ThemeConfig.getPrimaryTextStyle(
+          color: isSelected ? ThemeConfig.primaryColor : null,
+          fontWeight: isSelected ? FontWeight.bold : null,
         ),
       ),
+      trailing: isSelected ? const Icon(Icons.check, color: ThemeConfig.primaryColor) : null,
+      onTap: () {
+        ref.read(languageProvider.notifier).setLanguage(code);
+        Navigator.pop(context);
+      },
     );
   }
 }
