@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Main FastAPI service with AI model
+  api:
+    build: .
+    container_name: dyslexia-api
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=Dyslexia Support API
+      - DEBUG=False
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
+      - AI_MODEL_NAME=google/flan-t5-base
+      - AI_DEVICE=auto
+      - AI_INFERENCE_TIMEOUT=30
+      - AI_CACHE_MAX_SIZE=1000
+      - RATE_LIMIT_ENABLED=True
+      - RATE_LIMIT_REQUESTS=20
+      - RATE_LIMIT_WINDOW=60
+    volumes:
+      - ./app:/app/app
+      - ./models_cache:/root/.cache  # Cache for downloaded models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Redis for caching and rate limiting (Phase 1B+)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: dyslexia-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   restart: unless-stopped
+
+volumes:
+  # models_cache:
+  # redis_data:
+
+networks:
+  default:
+    name: dyslexia-network
