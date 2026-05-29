@@ -160,7 +160,7 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: ThemeConfig.primaryColor.withOpacity(0.1),
+                color: ThemeConfig.primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.auto_awesome, color: ThemeConfig.primaryColor, size: 30),
@@ -207,7 +207,7 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: ThemeConfig.successColor.withOpacity(0.1),
+                      color: ThemeConfig.successColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -287,9 +287,9 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
   Widget _buildErrorSection(bool isDark, String error) => Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: ThemeConfig.errorColor.withOpacity(0.05),
+        color: ThemeConfig.errorColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(ThemeConfig.radiusLarge),
-        border: Border.all(color: ThemeConfig.errorColor.withOpacity(0.2)),
+        border: Border.all(color: ThemeConfig.errorColor.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [

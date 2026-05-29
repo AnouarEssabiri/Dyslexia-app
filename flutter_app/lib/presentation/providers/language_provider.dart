@@ -42,7 +42,7 @@ class LanguageNotifier extends Notifier<LanguageState> {
   }
 }
 
-final languageProvider = NotifierProvider<LanguageNotifier, LanguageState>(() => LanguageNotifier());
+final languageProvider = NotifierProvider<LanguageNotifier, LanguageState>(LanguageNotifier.new);
 
 /// Localization Helper Class
 class AppLocalizations {

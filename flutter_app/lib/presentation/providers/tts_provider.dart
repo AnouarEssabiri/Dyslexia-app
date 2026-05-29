@@ -80,4 +80,4 @@ class TtsNotifier extends Notifier<bool> {
   }
 }
 
-final ttsProvider = NotifierProvider<TtsNotifier, bool>(() => TtsNotifier());
+final ttsProvider = NotifierProvider<TtsNotifier, bool>(TtsNotifier.new);

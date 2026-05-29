@@ -95,7 +95,7 @@ class HomePage extends ConsumerWidget {
           },
         ),
         const SizedBox(width: 8),
-        ModernAvatar(name: 'User', size: 32, showBorder: true),
+        const ModernAvatar(name: 'User', size: 32, showBorder: true),
         const SizedBox(width: 16),
       ],
     );
@@ -256,7 +256,7 @@ class HomePage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),

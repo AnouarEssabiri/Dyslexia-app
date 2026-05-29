@@ -309,7 +309,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            (isDark ? ThemeConfig.darkBackground : ThemeConfig.backgroundColor).withOpacity(0),
+            (isDark ? ThemeConfig.darkBackground : ThemeConfig.backgroundColor).withValues(alpha: 0),
             (isDark ? ThemeConfig.darkBackground : ThemeConfig.backgroundColor),
           ],
         ),
@@ -386,11 +386,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       ),
                     ),
             ),
-            _isRecording 
-                ? _buildStopRecordingButton(isDark)
-                : (_messageController.text.isEmpty 
+            if (_isRecording) _buildStopRecordingButton(isDark) else _messageController.text.isEmpty 
                     ? _buildMicButton(isDark) 
-                    : _buildSendButton(isDark)),
+                    : _buildSendButton(isDark),
           ],
         ),
       ),
@@ -399,7 +397,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   Widget _buildMicButton(bool isDark) => Container(
       margin: const EdgeInsets.only(left: 4),
       child: Material(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           onTap: _toggleRecording,

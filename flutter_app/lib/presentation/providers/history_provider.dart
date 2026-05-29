@@ -54,4 +54,4 @@ class HistoryNotifier extends Notifier<List<HistoryItem>> {
   }
 }
 
-final historyProvider = NotifierProvider<HistoryNotifier, List<HistoryItem>>(() => HistoryNotifier());
+final historyProvider = NotifierProvider<HistoryNotifier, List<HistoryItem>>(HistoryNotifier.new);

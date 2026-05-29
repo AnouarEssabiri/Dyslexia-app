@@ -77,7 +77,7 @@ class OcrPage extends StatelessWidget {
   Widget _buildComingSoonBadge(bool isDark) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: ThemeConfig.primaryColor.withOpacity(0.1),
+        color: ThemeConfig.primaryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

@@ -27,4 +27,4 @@ class SettingsNotifier extends Notifier<SettingsState> {
   }
 }
 
-final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(() => SettingsNotifier());
+final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
