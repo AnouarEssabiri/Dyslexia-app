@@ -3,11 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum HistoryType { chat, simplification }
 
 class HistoryItem {
-  final String id;
-  final String title;
-  final String content;
-  final DateTime timestamp;
-  final HistoryType type;
 
   HistoryItem({
     required this.id,
@@ -16,12 +11,16 @@ class HistoryItem {
     required this.timestamp,
     required this.type,
   });
+  final String id;
+  final String title;
+  final String content;
+  final DateTime timestamp;
+  final HistoryType type;
 }
 
 class HistoryNotifier extends Notifier<List<HistoryItem>> {
   @override
-  List<HistoryItem> build() {
-    return [
+  List<HistoryItem> build() => [
       // Initial mock data
       HistoryItem(
         id: '1',
@@ -38,7 +37,6 @@ class HistoryNotifier extends Notifier<List<HistoryItem>> {
         type: HistoryType.chat,
       ),
     ];
-  }
 
   void addItem(String title, String content, HistoryType type) {
     final newItem = HistoryItem(
@@ -56,6 +54,4 @@ class HistoryNotifier extends Notifier<List<HistoryItem>> {
   }
 }
 
-final historyProvider = NotifierProvider<HistoryNotifier, List<HistoryItem>>(() {
-  return HistoryNotifier();
-});
+final historyProvider = NotifierProvider<HistoryNotifier, List<HistoryItem>>(() => HistoryNotifier());

@@ -53,6 +53,11 @@ class ThemeConfig {
 
   // Font Configuration
   static const String dyslexiaFont = 'OpenDyslexic';
+  static const String fontFamilyPrimary = dyslexiaFont;
+  
+  // Custom Typography Settings for Dyslexia
+  static const double lineHeightXLarge = 1.8;
+  static const double letterSpacingWide = 1.2;
   
   static TextStyle getPrimaryTextStyle({
     double? fontSize,
@@ -240,7 +245,7 @@ class ThemeNotifier extends Notifier<ThemeMode> {
   }
 }
 
-final themeModeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(() => ThemeNotifier());
+final themeModeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(ThemeNotifier.new);
 
 final themeProvider = Provider<ThemeData>((ref) {
   final mode = ref.watch(themeModeProvider);

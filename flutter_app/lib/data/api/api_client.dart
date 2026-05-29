@@ -14,13 +14,11 @@ class SimplificationResponse {
     required this.inferenceTimeMs,
   });
 
-  factory SimplificationResponse.fromJson(Map<String, dynamic> json) {
-    return SimplificationResponse(
+  factory SimplificationResponse.fromJson(Map<String, dynamic> json) => SimplificationResponse(
       original: json['original'] as String,
       simplified: json['simplified'] as String,
       inferenceTimeMs: (json['inference_time_ms'] as num).toDouble(),
     );
-  }
   final String original;
   final String simplified;
   final double inferenceTimeMs;

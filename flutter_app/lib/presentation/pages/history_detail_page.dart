@@ -8,9 +8,9 @@ import '../providers/settings_provider.dart';
 import '../providers/language_provider.dart';
 
 class HistoryDetailPage extends ConsumerWidget {
-  final HistoryItem item;
 
   const HistoryDetailPage({super.key, required this.item});
+  final HistoryItem item;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,7 +31,7 @@ class HistoryDetailPage extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: ThemeConfig.primaryColor.withOpacity(0.1),
+                color: ThemeConfig.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -117,7 +117,5 @@ class HistoryDetailPage extends ConsumerWidget {
     ).animate().fadeIn(delay: 400.ms);
   }
 
-  String _formatTimestamp(DateTime timestamp) {
-    return '${timestamp.day}/${timestamp.month}/${timestamp.year} at ${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
-  }
+  String _formatTimestamp(DateTime timestamp) => '${timestamp.day}/${timestamp.month}/${timestamp.year} at ${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
 }

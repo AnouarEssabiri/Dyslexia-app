@@ -75,7 +75,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         if (mounted) {
           setState(() {
             _isLoading = false;
-            _messageController.text = "This is a simulated transcription of your recorded audio.";
+            _messageController.text = 'This is a simulated transcription of your recorded audio.';
           });
         }
       });
@@ -218,7 +218,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 28),
@@ -302,8 +302,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
-  Widget _buildInputArea(bool isDark, AppLocalizations l10n) {
-    return Container(
+  Widget _buildInputArea(bool isDark, AppLocalizations l10n) => Container(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -396,10 +395,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         ),
       ),
     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0);
-  }
 
-  Widget _buildMicButton(bool isDark) {
-    return Container(
+  Widget _buildMicButton(bool isDark) => Container(
       margin: const EdgeInsets.only(left: 4),
       child: Material(
         color: Colors.red.withOpacity(0.1),
@@ -418,10 +415,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         ),
       ),
     );
-  }
 
-  Widget _buildStopRecordingButton(bool isDark) {
-    return Container(
+  Widget _buildStopRecordingButton(bool isDark) => Container(
       margin: const EdgeInsets.only(left: 4),
       child: Material(
         color: Colors.red,
@@ -440,10 +435,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         ),
       ),
     );
-  }
 
-  Widget _buildSendButton(bool isDark) {
-    return Container(
+  Widget _buildSendButton(bool isDark) => Container(
       margin: const EdgeInsets.only(left: 4),
       child: Material(
         color: ThemeConfig.primaryColor,
@@ -462,5 +455,4 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         ),
       ),
     );
-  }
 }

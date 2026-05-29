@@ -8,10 +8,10 @@ import '../widgets/components/modern_drawer.dart';
 class ReaderPage extends StatefulWidget {
 
   const ReaderPage({
-    Key? key,
+    super.key,
     required this.originalText,
     required this.simplifiedText,
-  }) : super(key: key);
+  });
   final String originalText;
   final String simplifiedText;
 

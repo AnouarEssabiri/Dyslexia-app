@@ -56,8 +56,7 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, bool isDark, WidgetRef ref, LanguageState languageState) {
-    return SliverAppBar(
+  Widget _buildAppBar(BuildContext context, bool isDark, WidgetRef ref, LanguageState languageState) => SliverAppBar(
       floating: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -100,7 +99,6 @@ class HomePage extends ConsumerWidget {
         const SizedBox(width: 16),
       ],
     );
-  }
 
   void _showLanguageDialog(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -131,8 +129,7 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildAIPrompt(BuildContext context, bool isDark, AppLocalizations l10n) {
-    return ModernCard(
+  Widget _buildAIPrompt(BuildContext context, bool isDark, AppLocalizations l10n) => ModernCard(
       padding: const EdgeInsets.all(24),
       backgroundColor: isDark ? ThemeConfig.darkSurface : Colors.white,
       showShadow: true,
@@ -185,20 +182,16 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
-  }
 
-  Widget _buildSectionTitle(BuildContext context, String title, bool isDark) {
-    return Text(
+  Widget _buildSectionTitle(BuildContext context, String title, bool isDark) => Text(
       title,
       style: ThemeConfig.getPrimaryTextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
     ).animate().fadeIn(delay: 200.ms);
-  }
 
-  Widget _buildToolsGrid(BuildContext context, bool isDark, AppLocalizations l10n) {
-    return GridView.count(
+  Widget _buildToolsGrid(BuildContext context, bool isDark, AppLocalizations l10n) => GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
@@ -245,7 +238,6 @@ class HomePage extends ConsumerWidget {
         ),
       ],
     ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1, end: 0);
-  }
 
   Widget _buildToolCard(
     BuildContext context, {
@@ -254,8 +246,7 @@ class HomePage extends ConsumerWidget {
     required Color color,
     required bool isDark,
     required VoidCallback onTap,
-  }) {
-    return ModernCard(
+  }) => ModernCard(
       padding: const EdgeInsets.all(16),
       onTap: onTap,
       child: Column(
@@ -280,10 +271,8 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildRecentHistory(BuildContext context, bool isDark, AppLocalizations l10n) {
-    return Consumer(
+  Widget _buildRecentHistory(BuildContext context, bool isDark, AppLocalizations l10n) => Consumer(
       builder: (context, ref, child) {
         final history = ref.watch(historyProvider);
 
@@ -321,7 +310,6 @@ class HomePage extends ConsumerWidget {
         );
       },
     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0);
-  }
 
   String _formatTimestamp(BuildContext context, DateTime timestamp) {
     final l10n = AppLocalizations.of(context);
@@ -344,8 +332,7 @@ class HomePage extends ConsumerWidget {
     required HistoryItem item,
     required String time,
     required bool isDark,
-  }) {
-    return Container(
+  }) => Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: ModernCard(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -402,5 +389,4 @@ class HomePage extends ConsumerWidget {
         ),
       ),
     );
-  }
 }

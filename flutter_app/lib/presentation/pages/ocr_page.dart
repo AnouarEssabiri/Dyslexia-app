@@ -30,7 +30,7 @@ class OcrPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(32),
                   boxShadow: ThemeConfig.premiumShadow,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.camera_alt_outlined,
                   size: 56,
                   color: ThemeConfig.primaryColor,
@@ -74,8 +74,7 @@ class OcrPage extends StatelessWidget {
     );
   }
 
-  Widget _buildComingSoonBadge(bool isDark) {
-    return Container(
+  Widget _buildComingSoonBadge(bool isDark) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: ThemeConfig.primaryColor.withOpacity(0.1),
@@ -90,5 +89,4 @@ class OcrPage extends StatelessWidget {
         ),
       ),
     ).animate().fadeIn(delay: 500.ms);
-  }
 }

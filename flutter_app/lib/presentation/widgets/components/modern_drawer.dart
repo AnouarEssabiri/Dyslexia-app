@@ -133,7 +133,7 @@ class ModernDrawer extends ConsumerWidget {
                                 onChanged: (value) {
                                   ref.read(settingsProvider.notifier).setDyslexiaFont(value);
                                 },
-                                activeColor: ThemeConfig.primaryColor,
+                                activeThumbColor: ThemeConfig.primaryColor,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                               ),
                               ListTile(

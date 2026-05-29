@@ -83,8 +83,7 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
     );
   }
 
-  Widget _buildInputSection(bool isDark, bool isLoading, AppLocalizations l10n) {
-    return PremiumAnimation(
+  Widget _buildInputSection(bool isDark, bool isLoading, AppLocalizations l10n) => PremiumAnimation(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -151,10 +150,8 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
         ],
       ),
     );
-  }
 
-  Widget _buildLoadingSection(bool isDark, AppLocalizations l10n) {
-    return Center(
+  Widget _buildLoadingSection(bool isDark, AppLocalizations l10n) => Center(
       child: Column(
         children: [
           const SizedBox(height: 40),
@@ -188,10 +185,8 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
         ],
       ),
     ).animate().fadeIn();
-  }
 
-  Widget _buildResultsSection(bool isDark, SimplificationState state, AppLocalizations l10n) {
-    return Consumer(
+  Widget _buildResultsSection(bool isDark, SimplificationState state, AppLocalizations l10n) => Consumer(
       builder: (context, ref, child) {
         final settings = ref.watch(settingsProvider);
         return PremiumAnimation(
@@ -288,10 +283,8 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
         );
       },
     );
-  }
 
-  Widget _buildErrorSection(bool isDark, String error) {
-    return Container(
+  Widget _buildErrorSection(bool isDark, String error) => Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: ThemeConfig.errorColor.withOpacity(0.05),
@@ -314,5 +307,4 @@ class _TextInputPageState extends ConsumerState<TextInputPage> {
         ],
       ),
     ).animate().shake();
-  }
 }

@@ -1,19 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsState {
-  final bool useDyslexiaFont;
 
   SettingsState({
     this.useDyslexiaFont = true, // Default to true as per user's focus
   });
+  final bool useDyslexiaFont;
 
   SettingsState copyWith({
     bool? useDyslexiaFont,
-  }) {
-    return SettingsState(
+  }) => SettingsState(
       useDyslexiaFont: useDyslexiaFont ?? this.useDyslexiaFont,
     );
-  }
 }
 
 class SettingsNotifier extends Notifier<SettingsState> {
@@ -29,6 +27,4 @@ class SettingsNotifier extends Notifier<SettingsState> {
   }
 }
 
-final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(() {
-  return SettingsNotifier();
-});
+final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(() => SettingsNotifier());

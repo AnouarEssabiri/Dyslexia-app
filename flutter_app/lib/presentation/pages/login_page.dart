@@ -171,7 +171,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: ThemeConfig.primaryColor.withOpacity(0.3),
+            color: ThemeConfig.primaryColor.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),

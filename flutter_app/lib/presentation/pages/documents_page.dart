@@ -36,7 +36,7 @@ class DocumentsPage extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: ThemeConfig.premiumShadow,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.file_copy_outlined,
                   size: 48,
                   color: ThemeConfig.primaryColor,

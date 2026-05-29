@@ -2,33 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LanguageState {
-  final Locale locale;
-  final String languageName;
 
   LanguageState({
     required this.locale,
     required this.languageName,
   });
+  final Locale locale;
+  final String languageName;
 
   LanguageState copyWith({
     Locale? locale,
     String? languageName,
-  }) {
-    return LanguageState(
+  }) => LanguageState(
       locale: locale ?? this.locale,
       languageName: languageName ?? this.languageName,
     );
-  }
 }
 
 class LanguageNotifier extends Notifier<LanguageState> {
   @override
-  LanguageState build() {
-    return LanguageState(
+  LanguageState build() => LanguageState(
       locale: const Locale('en'),
       languageName: 'English',
     );
-  }
 
   void setLanguage(String langCode) {
     switch (langCode) {
@@ -46,14 +42,12 @@ class LanguageNotifier extends Notifier<LanguageState> {
   }
 }
 
-final languageProvider = NotifierProvider<LanguageNotifier, LanguageState>(() {
-  return LanguageNotifier();
-});
+final languageProvider = NotifierProvider<LanguageNotifier, LanguageState>(() => LanguageNotifier());
 
 /// Localization Helper Class
 class AppLocalizations {
-  final Locale locale;
   AppLocalizations(this.locale);
+  final Locale locale;
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -149,7 +143,7 @@ class AppLocalizations {
       'version': 'الإصدار',
       'account': 'الحساب',
       'new_chat': 'دردشة جديدة',
-      'hello_ai': "مرحباً! أنا مساعدك الذكي المتميز. يمكنني مساعدتك في تبسيط النصوص المعقدة، شرح المفاهيم الصعبة، أو تلخيص المستندات. كيف يمكنني مساعدتك اليوم؟",
+      'hello_ai': 'مرحباً! أنا مساعدك الذكي المتميز. يمكنني مساعدتك في تبسيط النصوص المعقدة، شرح المفاهيم الصعبة، أو تلخيص المستندات. كيف يمكنني مساعدتك اليوم؟',
       'mins_ago': 'منذ دقائق',
       'hours_ago': 'منذ ساعات',
       'yesterday': 'أمس',
@@ -220,9 +214,7 @@ class AppLocalizations {
     },
   };
 
-  String translate(String key) {
-    return _localizedValues[locale.languageCode]?[key] ?? key;
-  }
+  String translate(String key) => _localizedValues[locale.languageCode]?[key] ?? key;
 
   static AppLocalizations of(BuildContext context) {
     final locale = Localizations.localeOf(context);
