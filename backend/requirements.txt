@@ -13,3 +13,4 @@ aioredis
 python-multipart
 Pillow
 httpx
+email-validator
