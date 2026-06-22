@@ -14,3 +14,4 @@ python-multipart
 Pillow
 httpx
 email-validator
+opencv-python-headless
