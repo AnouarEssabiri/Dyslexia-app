@@ -15,3 +15,8 @@ Pillow
 httpx
 email-validator
 opencv-python-headless
+easyocr
+torchvision
+numpy
+groq
+sentencepiece
