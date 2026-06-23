@@ -90,20 +90,20 @@ Rules:
 
 
 # ─── Initialize EasyOCR readers ───────────────────────────────────────────────
-try:
-    # EasyOCR manages its own internal PyTorch setup; passing gpu=True defaults to GPU if available
-    reader_ar = easyocr.Reader(['ar', 'en'], gpu=True)
-    reader_fr = easyocr.Reader(['fr', 'en'], gpu=True)
-except Exception as e:
-    print(f"EasyOCR GPU initialization failed, falling back to CPU: {e}")
-    try:
-        reader_ar = easyocr.Reader(['ar', 'en'], gpu=False)
-        reader_fr = easyocr.Reader(['fr', 'en'], gpu=False)
-    except Exception as critical_e:
-        print(f"EasyOCR critical initialization failure: {critical_e}")
-        reader_ar = None
-        reader_fr = None
+OCR_READER = None
 
+def get_ocr_reader():
+    global OCR_READER
+    if OCR_READER is None:
+        print("[OCR] First OCR request received. Initializing single multi-lang engine...")
+        try:
+            # Combining all languages into ONE reader slashes RAM consumption in half
+            OCR_READER = easyocr.Reader(['en', 'fr', 'ar'], gpu=False)
+            print("[OCR] Engine initialized successfully.")
+        except Exception as e:
+            print(f"[OCR] Critical failure initializing EasyOCR: {e}")
+            raise HTTPException(status_code=500, detail="OCR engine failed to initialize.")
+    return OCR_READER
 app = FastAPI(title="Dyslexia Support API", version="1.0.0")
 
 app.add_middleware(
@@ -148,10 +148,10 @@ async def health_check():
     )
 
 @app.post("/api/ocr")
-async def perform_ocr(file: UploadFile = File(...), language: str = "ar"):
-    if reader_ar is None or reader_fr is None:
-        raise HTTPException(status_code=500, detail="OCR engine not initialized")
-    reader = reader_fr if language == "fr" else reader_ar
+async def perform_ocr(file: UploadFile = File(...)):
+    # Fetch the single shared reader instance dynamically
+    reader = get_ocr_reader()
+    
     try:
         content = await file.read()
         image_pil = Image.open(io.BytesIO(content))
@@ -159,6 +159,7 @@ async def perform_ocr(file: UploadFile = File(...), language: str = "ar"):
             image_pil = image_pil.convert('RGB')
         image_np = np.array(image_pil)
         
+        print("[OCR] Running text extraction...")
         results = reader.readtext(
             image_np,
             paragraph=True,
@@ -186,7 +187,7 @@ async def perform_ocr(file: UploadFile = File(...), language: str = "ar"):
         return {"filename": file.filename, "text": final_text, "status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+        
 @app.post("/api/simplify", response_model=SimplifyResponse)
 async def simplify_text(request: SimplifyRequest):
     start_time = time.time()
