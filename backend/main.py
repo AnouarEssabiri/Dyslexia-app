@@ -20,6 +20,7 @@ import logging
 # ─────────────────────────────
 # LOGGING (ANTI SPAM)
 # ─────────────────────────────
+logger.info(f"PID = {os.getpid()}")
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s | %(name)s | %(message)s"
