@@ -5,7 +5,7 @@ class AppConfig {
   static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ldHhnbXlmaGNvbmpnb3BpZmhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MTQwNDksImV4cCI6MjA5NDk5MDA0OX0.VOV6CWKLs08TY2mOkI0H9rB8tNQ4vslPmCPsduDRYdQ';
 
   // Backend API Configuration
-  static const String backendUrl = 'http://localhost:8000';
+  static const String backendUrl = 'https://dyslexia-app-production.up.railway.app';
   static const String apiPrefix = '/api';
 
   // API Endpoints
