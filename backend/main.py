@@ -42,6 +42,7 @@ load_dotenv(os.path.join(_THIS_DIR, ".env"), override=True)
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 logger.info(f"GROQ KEY: {'OK' if GROQ_API_KEY else 'MISSING'}")
+logger.info("STEP 1")
 
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -49,7 +50,7 @@ groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 # FASTAPI
 # ─────────────────────────────
 app = FastAPI(title="Dyslexia API", version="1.0.0")
-
+logger.info("STEP 3")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -76,7 +77,7 @@ except Exception as e:
     logger.error(f"OCR init failed: {e}")
     reader_ar = None
     reader_fr = None
-
+logger.info("STEP 2")
 # ─────────────────────────────
 # MODELS LOAD
 # ─────────────────────────────
@@ -110,6 +111,7 @@ startup_done = False
 
 @app.on_event("startup")
 async def startup_event():
+    logger.info("STEP 4")
     global startup_done
 
     if startup_done:
